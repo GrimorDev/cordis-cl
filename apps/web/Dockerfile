@@ -6,7 +6,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY apps/web/package.json ./apps/web/
 COPY packages/shared/package.json ./packages/shared/
-RUN pnpm install --frozen-lockfile --filter @cordis/web...
+# --no-frozen-lockfile: lockfile generated on Windows differs in optional
+# platform-specific deps (esbuild prebuilts). CI enforces lockfile separately.
+RUN pnpm install --no-frozen-lockfile --filter @cordis/web...
 
 FROM base AS builder
 WORKDIR /app

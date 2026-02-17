@@ -1,5 +1,7 @@
 FROM node:22-alpine AS base
 RUN corepack enable pnpm
+# argon2 needs build tools for native compilation
+RUN apk add --no-cache python3 make g++
 
 # Install dependencies
 FROM base AS deps
@@ -7,7 +9,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY apps/server/package.json ./apps/server/
 COPY packages/shared/package.json ./packages/shared/
-RUN pnpm install --frozen-lockfile --filter @cordis/server...
+# --no-frozen-lockfile: lockfile generated on Windows differs in optional
+# platform-specific deps (argon2 prebuilts). CI enforces lockfile separately.
+RUN pnpm install --no-frozen-lockfile --filter @cordis/server...
 
 # Build
 FROM base AS builder
