@@ -54,10 +54,6 @@ services:
   # ── API Server ──────────────────────────────────────────────────────────────
   server:
     image: ghcr.io/grimordev/cordis-server:${IMAGE_TAG:-latest}
-    build:
-      context: .
-      dockerfile: apps/server/Dockerfile
-      target: production
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -84,10 +80,6 @@ services:
   # Uses host network for WebRTC UDP ports (mediasoup requirement)
   voice:
     image: ghcr.io/grimordev/cordis-voice:${IMAGE_TAG:-latest}
-    build:
-      context: .
-      dockerfile: apps/voice/Dockerfile
-      target: production
     restart: unless-stopped
     network_mode: host
     environment:
@@ -104,14 +96,6 @@ services:
   # ── Web Frontend ────────────────────────────────────────────────────────────
   web:
     image: ghcr.io/grimordev/cordis-web:${IMAGE_TAG:-latest}
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-      target: production
-      args:
-        VITE_API_URL: ${API_URL}
-        VITE_VOICE_URL: ${VOICE_URL}
-        VITE_GATEWAY_URL: ${GATEWAY_URL}
     restart: unless-stopped
     networks:
       - cordis_net
