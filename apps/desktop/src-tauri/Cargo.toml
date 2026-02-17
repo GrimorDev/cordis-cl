@@ -1,0 +1,30 @@
+[package]
+name = "cordis"
+version = "0.0.1"
+description = "Cordis - A better way to communicate"
+authors = ["Cordis Team"]
+edition = "2021"
+
+[lib]
+name = "cordis_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["devtools", "tray-icon"] }
+tauri-plugin-notification = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+opt-level = "s"
+panic = "abort"
+codegen-units = 1
+lto = true
+strip = true
