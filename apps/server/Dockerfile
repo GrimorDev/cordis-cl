@@ -7,8 +7,12 @@ RUN apk add --no-cache python3 make g++
 FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY apps/server/package.json ./apps/server/
-COPY packages/shared/package.json ./packages/shared/
+# ALL workspace package.json files so pnpm can resolve the workspace graph
+COPY apps/server/package.json    ./apps/server/package.json
+COPY apps/voice/package.json     ./apps/voice/package.json
+COPY apps/web/package.json       ./apps/web/package.json
+COPY apps/desktop/package.json   ./apps/desktop/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
 # --no-frozen-lockfile: lockfile generated on Windows differs in optional
 # platform-specific deps (argon2 prebuilts). CI enforces lockfile separately.
 RUN pnpm install --no-frozen-lockfile --filter @cordis/server...
