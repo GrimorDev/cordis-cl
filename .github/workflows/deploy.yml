@@ -105,24 +105,3 @@ jobs:
             VITE_API_URL=${{ vars.VITE_API_URL }}
             VITE_VOICE_URL=${{ vars.VITE_VOICE_URL }}
             VITE_GATEWAY_URL=${{ vars.VITE_GATEWAY_URL }}
-
-  deploy:
-    name: Deploy via Portainer
-    runs-on: ubuntu-latest
-    needs: [build-server, build-voice, build-web]
-    # Only deploy if the webhook secret is configured
-    if: ${{ secrets.PORTAINER_WEBHOOK_URL != '' }}
-
-    steps:
-      - name: Trigger Portainer webhook
-        run: |
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X POST \
-            "${{ secrets.PORTAINER_WEBHOOK_URL }}")
-
-          echo "Portainer webhook response: $HTTP_STATUS"
-
-          if [ "$HTTP_STATUS" != "204" ] && [ "$HTTP_STATUS" != "200" ]; then
-            echo "Portainer webhook failed with status $HTTP_STATUS"
-            exit 1
-          fi
